@@ -13,8 +13,8 @@
 
 @property(nonatomic) NSMutableDictionary* fAttributes;
 
-@property(nonatomic) CGFloat fDownloadRate;
-@property(nonatomic) CGFloat fUploadRate;
+@property(nonatomic) uint64_t fDnRateBps;
+@property(nonatomic) uint64_t fUpRateBps;
 
 - (void)badge:(NSImage*)badge string:(NSString*)string atHeight:(CGFloat)height;
 
@@ -28,22 +28,22 @@
     {
         _fLib = lib;
 
-        _fDownloadRate = 0.0;
-        _fUploadRate = 0.0;
+        _fDnRateBps = 0;
+        _fUpRateBps = 0;
     }
     return self;
 }
 
-- (BOOL)setRatesWithDownload:(CGFloat)downloadRate upload:(CGFloat)uploadRate
+- (BOOL)setRatesWithDownload:(uint64_t)dnRateBps upload:(uint64_t)upRateBps
 {
     //only needs update if the badges were displayed or are displayed now
-    if (self.fDownloadRate == downloadRate && self.fUploadRate == uploadRate)
+    if (self.fDnRateBps == dnRateBps && self.fUpRateBps == upRateBps)
     {
         return NO;
     }
 
-    self.fDownloadRate = downloadRate;
-    self.fUploadRate = uploadRate;
+    self.fDnRateBps = dnRateBps;
+    self.fUpRateBps = upRateBps;
     return YES;
 }
 
@@ -51,13 +51,13 @@
 {
     [NSApp.applicationIconImage drawInRect:rect fromRect:NSZeroRect operation:NSCompositingOperationSourceOver fraction:1.0];
 
-    BOOL const upload = self.fUploadRate >= 0.1;
-    BOOL const download = self.fDownloadRate >= 0.1;
+    BOOL const upload = self.fUpRateBps >= 0;
+    BOOL const download = self.fDnRateBps >= 0;
     CGFloat bottom = 0.0;
     if (upload)
     {
         NSImage* uploadBadge = [NSImage imageNamed:@"UploadBadge"];
-        [self badge:uploadBadge string:[NSString stringForSpeedAbbrev:self.fUploadRate] atHeight:bottom];
+        [self badge:uploadBadge string:[NSString stringForSpeedAbbrev:self.fUpRateBps] atHeight:bottom];
 
         if (download)
         {
@@ -66,7 +66,7 @@
     }
     if (download)
     {
-        [self badge:[NSImage imageNamed:@"DownloadBadge"] string:[NSString stringForSpeedAbbrev:self.fDownloadRate] atHeight:bottom];
+        [self badge:[NSImage imageNamed:@"DownloadBadge"] string:[NSString stringForSpeedAbbrev:self.fDnRateBps] atHeight:bottom];
     }
 }
 

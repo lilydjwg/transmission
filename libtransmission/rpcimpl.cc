@@ -469,8 +469,8 @@ static void addPeers(tr_torrent const* tor, tr_variant* list)
         tr_variantDictAddBool(d, TR_KEY_peerIsInterested, peer->peerIsInterested);
         tr_variantDictAddInt(d, TR_KEY_port, peer->port);
         tr_variantDictAddReal(d, TR_KEY_progress, peer->progress);
-        tr_variantDictAddInt(d, TR_KEY_rateToClient, tr_toSpeedBytes(peer->rateToClient_KBps));
-        tr_variantDictAddInt(d, TR_KEY_rateToPeer, tr_toSpeedBytes(peer->rateToPeer_KBps));
+        tr_variantDictAddInt(d, TR_KEY_rateToClient, peer->rateToClientBps);
+        tr_variantDictAddInt(d, TR_KEY_rateToPeer, peer->rateToPeerBps);
     }
 
     tr_torrentPeersFree(peers, peerCount);

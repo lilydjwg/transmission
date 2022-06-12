@@ -27,8 +27,8 @@ typedef NS_ENUM(unsigned int, statusTag) {
 
 @property(nonatomic, readonly) tr_session* fLib;
 
-@property(nonatomic) CGFloat fPreviousDownloadRate;
-@property(nonatomic) CGFloat fPreviousUploadRate;
+@property(nonatomic) uint64_t fPreviousDownloadRateBps;
+@property(nonatomic) uint64_t fPreviousUploadRateBps;
 
 @end
 
@@ -40,8 +40,8 @@ typedef NS_ENUM(unsigned int, statusTag) {
     {
         _fLib = lib;
 
-        _fPreviousDownloadRate = -1.0;
-        _fPreviousUploadRate = -1.0;
+        _fPreviousDownloadRateBps = -1;
+        _fPreviousUploadRateBps = -1;
     }
 
     return self;
@@ -73,19 +73,19 @@ typedef NS_ENUM(unsigned int, statusTag) {
     [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
-- (void)updateWithDownload:(CGFloat)dlRate upload:(CGFloat)ulRate
+- (void)updateWithDownload:(uint64_t)dlRateBps upload:(uint64_t)ulRateBps;
 {
     //set rates
-    if (dlRate != self.fPreviousDownloadRate)
+    if (dlRateBps != self.fPreviousDownloadRateBps)
     {
-        self.fTotalDLField.stringValue = [NSString stringForSpeed:dlRate];
-        self.fPreviousDownloadRate = dlRate;
+        self.fTotalDLField.stringValue = [NSString stringForSpeed:dlRateBps];
+        self.fPreviousDownloadRateBps = dlRateBps;
     }
 
-    if (ulRate != self.fPreviousUploadRate)
+    if (ulRateBps != self.fPreviousUploadRateBps)
     {
-        self.fTotalULField.stringValue = [NSString stringForSpeed:ulRate];
-        self.fPreviousUploadRate = ulRate;
+        self.fTotalULField.stringValue = [NSString stringForSpeed:ulRateBps];
+        self.fPreviousUploadRateBps = ulRateBps;
     }
 
     //set status button text

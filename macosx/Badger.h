@@ -12,7 +12,7 @@
 
 - (instancetype)initWithLib:(tr_session*)lib;
 
-- (void)updateBadgeWithDownload:(CGFloat)downloadRate upload:(CGFloat)uploadRate;
+- (void)updateBadgeWithDownload:(uint64_t)dlRateBps upload:(uint64_t)ulRateBps;
 - (void)addCompletedTorrent:(Torrent*)torrent;
 - (void)removeTorrent:(Torrent*)torrent;
 - (void)clearCompleted;

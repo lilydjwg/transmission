@@ -14,8 +14,8 @@
 + (NSString*)stringForFileSize:(uint64_t)size;
 + (NSString*)stringForFilePartialSize:(uint64_t)partialSize fullSize:(uint64_t)fullSize;
 
-+ (NSString*)stringForSpeed:(CGFloat)speed;
-+ (NSString*)stringForSpeedAbbrev:(CGFloat)speed;
++ (NSString*)stringForSpeed:(uint64_t)bytes_per_second;
++ (NSString*)stringForSpeedAbbrev:(uint64_t)bytes_per_second;
 + (NSString*)stringForRatio:(CGFloat)ratio;
 
 + (NSString*)percentString:(CGFloat)progress longDecimals:(BOOL)longDecimals;

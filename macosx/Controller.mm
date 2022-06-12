@@ -2196,15 +2196,16 @@ static void removeKeRangerRansomware()
 
 - (void)updateUI
 {
-    CGFloat dlRate = 0.0, ulRate = 0.0;
+    auto dlRateBps = uint64_t{};
+    auto ulRateBps = uint64_t{};
     BOOL anyCompleted = NO;
     for (Torrent* torrent in self.fTorrents)
     {
         [torrent update];
 
         //pull the upload and download speeds - most consistent by using current stats
-        dlRate += torrent.downloadRate;
-        ulRate += torrent.uploadRate;
+        dlRateBps += torrent.downloadRateBps;
+        ulRateBps += torrent.uploadRateBps;
 
         anyCompleted |= torrent.finishedSeeding;
     }
@@ -2215,7 +2216,7 @@ static void removeKeRangerRansomware()
         {
             [self sortTorrentsAndIncludeQueueOrder:NO];
 
-            [self.fStatusBar updateWithDownload:dlRate upload:ulRate];
+            [self.fStatusBar updateWithDownload:dlRateBps upload:ulRateBps];
 
             self.fClearCompletedButton.hidden = !anyCompleted;
         }
@@ -2228,7 +2229,7 @@ static void removeKeRangerRansomware()
     }
 
     //badge dock
-    [self.fBadger updateBadgeWithDownload:dlRate upload:ulRate];
+    [self.fBadger updateBadgeWithDownload:dlRateBps upload:ulRateBps];
 }
 
 #warning can this be removed or refined?
@@ -3495,8 +3496,8 @@ static void removeKeRangerRansomware()
             }
             else
             {
-                CGFloat rate = [ident isEqualToString:@"UL"] ? group.uploadRate : group.downloadRate;
-                return [NSString stringForSpeed:rate];
+                auto const rateBps = [ident isEqualToString:@"UL"] ? group.uploadRateBps : group.downloadRateBps;
+                return [NSString stringForSpeed:rateBps];
             }
         }
     }

@@ -1207,14 +1207,14 @@ public:
         add(key);
         add(was_updated);
         add(url);
-        add(download_rate_double);
+        add(download_rate_bps);
         add(download_rate_string);
     }
 
     Gtk::TreeModelColumn<std::string> key;
     Gtk::TreeModelColumn<bool> was_updated;
     Gtk::TreeModelColumn<Glib::ustring> url;
-    Gtk::TreeModelColumn<double> download_rate_double;
+    Gtk::TreeModelColumn<unsigned int> download_rate_bps;
     Gtk::TreeModelColumn<Glib::ustring> download_rate_string;
 };
 
@@ -1229,9 +1229,9 @@ public:
         add(was_updated);
         add(address);
         add(address_collated);
-        add(download_rate_double);
+        add(download_rate_bps);
         add(download_rate_string);
-        add(upload_rate_double);
+        add(upload_rate_bps);
         add(upload_rate_string);
         add(client);
         add(progress);
@@ -1256,9 +1256,9 @@ public:
     Gtk::TreeModelColumn<bool> was_updated;
     Gtk::TreeModelColumn<Glib::ustring> address;
     Gtk::TreeModelColumn<Glib::ustring> address_collated;
-    Gtk::TreeModelColumn<double> download_rate_double;
+    Gtk::TreeModelColumn<unsigned int> download_rate_bps;
     Gtk::TreeModelColumn<Glib::ustring> download_rate_string;
-    Gtk::TreeModelColumn<double> upload_rate_double;
+    Gtk::TreeModelColumn<unsigned int> upload_rate_bps;
     Gtk::TreeModelColumn<Glib::ustring> upload_rate_string;
     Gtk::TreeModelColumn<Glib::ustring> client;
     Gtk::TreeModelColumn<int> progress;
@@ -1317,14 +1317,14 @@ void refreshPeerRow(Gtk::TreeIter const& iter, tr_peer_stat const* peer)
 
     g_return_if_fail(peer != nullptr);
 
-    if (peer->rateToPeer_KBps > 0.01)
+    if (peer->rateToPeerBps > 0)
     {
-        up_speed = tr_formatter_speed_KBps(peer->rateToPeer_KBps);
+        up_speed = tr_formatter_speed_Bps(peer->rateToPeerBps);
     }
 
-    if (peer->rateToClient_KBps > 0)
+    if (peer->rateToClientBps > 0)
     {
-        down_speed = tr_formatter_speed_KBps(peer->rateToClient_KBps);
+        down_speed = tr_formatter_speed_Bps(peer->rateToClientBps);
     }
 
     if (peer->activeReqsToPeer > 0)
@@ -1362,9 +1362,9 @@ void refreshPeerRow(Gtk::TreeIter const& iter, tr_peer_stat const* peer)
     (*iter)[peer_cols.upload_request_count_string] = up_count;
     (*iter)[peer_cols.download_request_count_int] = peer->activeReqsToPeer;
     (*iter)[peer_cols.download_request_count_string] = down_count;
-    (*iter)[peer_cols.download_rate_double] = peer->rateToClient_KBps;
+    (*iter)[peer_cols.download_rate_uint] = peer->rateToClientBps;
     (*iter)[peer_cols.download_rate_string] = down_speed;
-    (*iter)[peer_cols.upload_rate_double] = peer->rateToPeer_KBps;
+    (*iter)[peer_cols.upload_rate_uint] = peer->rateToPeerBps;
     (*iter)[peer_cols.upload_rate_string] = up_speed;
     (*iter)[peer_cols.flags] = peer->flagStr;
     (*iter)[peer_cols.was_updated] = true;
@@ -1512,10 +1512,10 @@ void DetailsDialog::Impl::refreshWebseedList(std::vector<tr_torrent*> const& tor
             auto const key = make_key(tor, webseed.url);
             auto const iter = store->get_iter(hash.at(key).get_path());
 
-            auto const KBps = double(webseed.download_bytes_per_second) / speed_K;
+            auto const Bps = webseed.download_bytes_per_second;
             auto const buf = webseed.is_downloading ? tr_formatter_speed_KBps(KBps) : std::string();
 
-            (*iter)[webseed_cols.download_rate_double] = KBps;
+            (*iter)[webseed_cols.download_rate_bps] = Bps;
             (*iter)[webseed_cols.download_rate_string] = buf;
             (*iter)[webseed_cols.was_updated] = true;
         }
@@ -1770,7 +1770,7 @@ void setPeerViewColumns(Gtk::TreeView* peer_view)
             r->property_xalign() = 1.0F;
             c = Gtk::make_managed<Gtk::TreeViewColumn>(_("Down"), *r);
             c->add_attribute(r->property_text(), *col);
-            sort_col = &peer_cols.download_rate_double;
+            sort_col = &peer_cols.download_rate_bps;
         }
         else if (*col == peer_cols.upload_rate_string)
         {
@@ -1778,7 +1778,7 @@ void setPeerViewColumns(Gtk::TreeView* peer_view)
             r->property_xalign() = 1.0F;
             c = Gtk::make_managed<Gtk::TreeViewColumn>(_("Up"), *r);
             c->add_attribute(r->property_text(), *col);
-            sort_col = &peer_cols.upload_rate_double;
+            sort_col = &peer_cols.upload_rate_bps;
         }
         else if (*col == peer_cols.client)
         {
@@ -1844,7 +1844,7 @@ Gtk::Widget* DetailsDialog::Impl::peer_page_new()
         auto* r = Gtk::make_managed<Gtk::CellRendererText>();
         auto* c = Gtk::make_managed<Gtk::TreeViewColumn>(_("Down"), *r);
         c->add_attribute(r->property_text(), webseed_cols.download_rate_string);
-        c->set_sort_column(webseed_cols.download_rate_double);
+        c->set_sort_column(webseed_cols.download_rate_bps);
         v->append_column(*c);
     }
 

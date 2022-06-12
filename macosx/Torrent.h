@@ -156,9 +156,9 @@ typedef NS_ENUM(unsigned int, TorrentDeterminationType) {
 @property(nonatomic, readonly) NSUInteger peersSendingToUs;
 @property(nonatomic, readonly) NSUInteger peersGettingFromUs;
 
-@property(nonatomic, readonly) CGFloat downloadRateBps;
-@property(nonatomic, readonly) CGFloat uploadRateBps;
-@property(nonatomic, readonly) CGFloat totalRateBps;
+@property(nonatomic, readonly) uint64_t downloadRateBps;
+@property(nonatomic, readonly) uint64_t uploadRateBps;
+@property(nonatomic, readonly) uint64_t totalRateBps;
 @property(nonatomic, readonly) uint64_t haveVerified;
 @property(nonatomic, readonly) uint64_t haveTotal;
 @property(nonatomic, readonly) uint64_t totalSizeSelected;

@@ -10,6 +10,6 @@
 
 - (instancetype)initWithLib:(tr_session*)lib;
 
-- (BOOL)setRatesWithDownload:(CGFloat)downloadRate upload:(CGFloat)uploadRate;
+- (BOOL)setRatesWithDownload:(uint64_t)dnRateBps upload:(uint64_t)upRateBps;
 
 @end

@@ -43,26 +43,28 @@
     return tr_getRatio(uploaded, total_size);
 }
 
-- (CGFloat)uploadRate
+- (uint64_t)uploadRateBps
 {
-    CGFloat rate = 0.0;
+    auto sum = uint64_t{};
+
     for (Torrent* torrent in self.torrents)
     {
-        rate += torrent.uploadRate;
+        sum += torrent.uploadRateBps;
     }
 
-    return rate;
+    return sum;
 }
 
-- (CGFloat)downloadRate
+- (uint64_t)downloadRateBps
 {
-    CGFloat rate = 0.0;
+    auto sum = uint64_t{};
+
     for (Torrent* torrent in self.torrents)
     {
-        rate += torrent.downloadRate;
+        sum += torrent.downloadRateBps;
     }
 
-    return rate;
+    return sum;
 }
 
 @end

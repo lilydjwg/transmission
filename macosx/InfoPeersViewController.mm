@@ -303,7 +303,7 @@
         if ([ident isEqualToString:@"DL From"])
         {
             NSNumber* rate;
-            return (rate = webSeed[@"DL From Rate"]) ? [NSString stringForSpeedAbbrev:rate.doubleValue] : @"";
+            return (rate = webSeed[@"DL From Rate"]) ? [NSString stringForSpeedAbbrev:rate.unsignedIntegerValue] : @"";
         }
         else
         {
@@ -330,12 +330,12 @@
         else if ([ident isEqualToString:@"UL To"])
         {
             NSNumber* rate;
-            return (rate = peer[@"UL To Rate"]) ? [NSString stringForSpeedAbbrev:rate.doubleValue] : @"";
+            return (rate = peer[@"UL To Rate"]) ? [NSString stringForSpeedAbbrev:rate.unsignedIntegerValue] : @"";
         }
         else if ([ident isEqualToString:@"DL From"])
         {
             NSNumber* rate;
-            return (rate = peer[@"DL From Rate"]) ? [NSString stringForSpeedAbbrev:rate.doubleValue] : @"";
+            return (rate = peer[@"DL From Rate"]) ? [NSString stringForSpeedAbbrev:rate.unsignedIntegerValue] : @"";
         }
         else
         {

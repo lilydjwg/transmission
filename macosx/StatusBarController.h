@@ -10,7 +10,7 @@
 
 - (instancetype)initWithLib:(tr_session*)lib;
 
-- (void)updateWithDownload:(CGFloat)dlRate upload:(CGFloat)ulRate;
+- (void)updateWithDownload:(uint64_t)dlRateBps upload:(uint64_t)ulRateBps;
 
 - (void)updateSpeedFieldsToolTips;
 

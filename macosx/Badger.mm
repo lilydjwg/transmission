@@ -32,13 +32,13 @@
     return self;
 }
 
-- (void)updateBadgeWithDownload:(CGFloat)downloadRate upload:(CGFloat)uploadRate
+- (void)updateBadgeWithDownload:(uint64_t)dlRateBps upload:(uint64_t)ulRateBps
 {
-    CGFloat const displayDlRate = [NSUserDefaults.standardUserDefaults boolForKey:@"BadgeDownloadRate"] ? downloadRate : 0.0;
-    CGFloat const displayUlRate = [NSUserDefaults.standardUserDefaults boolForKey:@"BadgeUploadRate"] ? uploadRate : 0.0;
+    uint64_t const displayDlRateBps = [NSUserDefaults.standardUserDefaults boolForKey:@"BadgeDownloadRate"] ? dlRateBps : 0;
+    uint64_t const displayUlRateBps = [NSUserDefaults.standardUserDefaults boolForKey:@"BadgeUploadRate"] ? ulRateBps : 0;
 
     //only update if the badged values change
-    if ([(BadgeView*)NSApp.dockTile.contentView setRatesWithDownload:displayDlRate upload:displayUlRate])
+    if ([(BadgeView*)NSApp.dockTile.contentView setRatesWithDownload:displayDlRateBps upload:displayUlRateBps])
     {
         [NSApp.dockTile display];
     }

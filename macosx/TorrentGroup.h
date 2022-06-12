@@ -15,7 +15,7 @@
 @property(nonatomic, readonly) NSMutableArray<Torrent*>* torrents;
 
 @property(nonatomic, readonly) CGFloat ratio;
-@property(nonatomic, readonly) CGFloat uploadRate;
-@property(nonatomic, readonly) CGFloat downloadRate;
+@property(nonatomic, readonly) uint64_t uploadRateBps;
+@property(nonatomic, readonly) uint64_t downloadRateBps;
 
 @end

@@ -1274,8 +1274,8 @@ struct tr_peer_stat
     char const* client;
 
     float progress;
-    double rateToPeer_KBps;
-    double rateToClient_KBps;
+    uint32_t rateToPeerBps;
+    uint32_t rateToClientBps;
 
     /***
     ****  THESE NEXT FOUR FIELDS ARE EXPERIMENTAL.

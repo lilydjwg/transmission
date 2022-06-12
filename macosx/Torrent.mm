@@ -1007,11 +1007,11 @@ bool trashDataFile(char const* filename, tr_error** error)
 
         if (peer->isUploadingTo)
         {
-            dict[@"UL To Rate"] = @(peer->rateToPeer_KBps);
+            dict[@"UL To Rate"] = @(peer->rateToPeerBps);
         }
         if (peer->isDownloadingFrom)
         {
-            dict[@"DL From Rate"] = @(peer->rateToClient_KBps);
+            dict[@"DL From Rate"] = @(peer->rateToClientBps);
         }
 
         [peerDicts addObject:dict];
@@ -1042,7 +1042,7 @@ bool trashDataFile(char const* filename, tr_error** error)
 
         if (webseed.is_downloading)
         {
-            dict[@"DL From Rate"] = @(double(webseed.download_bytes_per_second) / 1000);
+            dict[@"DL From Rate"] = @(webseed.download_bytes_per_second);
         }
 
         [webSeeds addObject:dict];
@@ -1235,15 +1235,15 @@ bool trashDataFile(char const* filename, tr_error** error)
         {
             string = [string stringByAppendingFormat:@" - %@: %@, %@: %@",
                                                      NSLocalizedString(@"DL", "Torrent -> status string"),
-                                                     [NSString stringForSpeed:self.downloadRate],
+                                                     [NSString stringForSpeed:self.downloadRateBps],
                                                      NSLocalizedString(@"UL", "Torrent -> status string"),
-                                                     [NSString stringForSpeed:self.uploadRate]];
+                                                     [NSString stringForSpeed:self.uploadRateBps]];
         }
         else
         {
             string = [string stringByAppendingFormat:@" - %@: %@",
                                                      NSLocalizedString(@"UL", "Torrent -> status string"),
-                                                     [NSString stringForSpeed:self.uploadRate]];
+                                                     [NSString stringForSpeed:self.uploadRateBps]];
         }
     }
 
@@ -1288,9 +1288,9 @@ bool trashDataFile(char const* filename, tr_error** error)
     case TR_STATUS_DOWNLOAD:
         string = [NSString stringWithFormat:@"%@: %@, %@: %@",
                                             NSLocalizedString(@"DL", "Torrent -> status string"),
-                                            [NSString stringForSpeed:self.downloadRate],
+                                            [NSString stringForSpeed:self.downloadRateBps],
                                             NSLocalizedString(@"UL", "Torrent -> status string"),
-                                            [NSString stringForSpeed:self.uploadRate]];
+                                            [NSString stringForSpeed:self.uploadRateBps]];
         break;
 
     case TR_STATUS_SEED:
@@ -1298,7 +1298,7 @@ bool trashDataFile(char const* filename, tr_error** error)
                                             NSLocalizedString(@"Ratio", "Torrent -> status string"),
                                             [NSString stringForRatio:self.ratio],
                                             NSLocalizedString(@"UL", "Torrent -> status string"),
-                                            [NSString stringForSpeed:self.uploadRate]];
+                                            [NSString stringForSpeed:self.uploadRateBps]];
     }
 
     return string;
@@ -1407,19 +1407,19 @@ bool trashDataFile(char const* filename, tr_error** error)
     return self.fStat->peersGettingFromUs;
 }
 
-- (CGFloat)downloadRateBps
+- (uint64_t)downloadRateBps
 {
-    return self.fStat->pieceDownloadSpeedBps;
+    return self.fStat->downloadSpeedBps;
 }
 
-- (CGFloat)uploadRateBps
+- (uint64_t)uploadRateBps
 {
-    return self.fStat->pieceUploadSpeedBps;
+    return self.fStat->uploadSpeedBps;
 }
 
-- (CGFloat)totalRateBps
+- (uint64_t)totalRateBps
 {
-    return self.downloadRate + self.uploadRate;
+    return self.downloadRateBps + self.uploadRateBps;
 }
 
 - (uint64_t)haveVerified

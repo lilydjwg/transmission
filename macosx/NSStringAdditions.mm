@@ -11,7 +11,7 @@
 
 + (NSString*)stringForFileSizeLion:(uint64_t)size showUnitUnless:(NSString*)notAllowedUnit unitsUsed:(NSString**)unitUsed;
 
-+ (NSString*)stringForSpeed:(CGFloat)speed kb:(NSString*)kb mb:(NSString*)mb gb:(NSString*)gb;
++ (NSString*)stringForSpeed:(uint64_t)speed kb:(NSString*)kb mb:(NSString*)mb gb:(NSString*)gb;
 
 @end
 
@@ -68,16 +68,16 @@
     return [NSString stringWithFormat:NSLocalizedString(@"%@ of %@", "file size string"), partialString, fullString];
 }
 
-+ (NSString*)stringForSpeed:(CGFloat)speed
++ (NSString*)stringForSpeed:(uint64_t)bytes_per_second
 {
-    return [self stringForSpeed:speed kb:NSLocalizedString(@"KB/s", "Transfer speed (kilobytes per second)")
+    return [self stringForSpeed:bytes_per_second kb:NSLocalizedString(@"KB/s", "Transfer speed (kilobytes per second)")
                              mb:NSLocalizedString(@"MB/s", "Transfer speed (megabytes per second)")
                              gb:NSLocalizedString(@"GB/s", "Transfer speed (gigabytes per second)")];
 }
 
-+ (NSString*)stringForSpeedAbbrev:(CGFloat)speed
++ (NSString*)stringForSpeedAbbrev:(uint64_t)bytes_per_second
 {
-    return [self stringForSpeed:speed kb:@"K" mb:@"M" gb:@"G"];
+    return [self stringForSpeed:bytes_per_second kb:@"K" mb:@"M" gb:@"G"];
 }
 
 + (NSString*)stringForRatio:(CGFloat)ratio
@@ -197,8 +197,10 @@
     return fileSizeString;
 }
 
-+ (NSString*)stringForSpeed:(CGFloat)speed kb:(NSString*)kb mb:(NSString*)mb gb:(NSString*)gb
++ (NSString*)stringForSpeed:(uint64_t)bytes_per_second kb:(NSString*)kb mb:(NSString*)mb gb:(NSString*)gb
 {
+    auto speed = tr_toSpeedKBps(bytes_per_second);
+
     if (speed <= 999.95) //0.0 KB/s to 999.9 KB/s
     {
         return [NSString localizedStringWithFormat:@"%.1f %@", speed, kb];
