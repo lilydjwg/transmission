@@ -154,9 +154,9 @@ static std::string getStatusStr(tr_stat const* st)
             tr_truncd(100 * st->percentDone, 1),
             st->peersSendingToUs,
             st->peersConnected,
-            tr_formatter_speed_KBps(st->pieceDownloadSpeed_KBps),
+            tr_formatter_speed_Bps(st->downloadSpeedBps),
             st->peersGettingFromUs,
-            tr_formatter_speed_KBps(st->pieceUploadSpeed_KBps),
+            tr_formatter_speed_Bps(st->uploadSpeedBps),
             tr_strlratio(st->ratio));
     }
 
@@ -166,7 +166,7 @@ static std::string getStatusStr(tr_stat const* st)
             FMT_STRING("Seeding, uploading to {:d} of {:d} peer(s), {:s} [{:s}]"),
             st->peersGettingFromUs,
             st->peersConnected,
-            tr_formatter_speed_KBps(st->pieceUploadSpeed_KBps),
+            tr_formatter_speed_Bps(st->uploadSpeedBps),
             tr_strlratio(st->ratio));
     }
 

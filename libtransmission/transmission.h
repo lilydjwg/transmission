@@ -1596,13 +1596,15 @@ struct tr_stat
         Range is [0..1] */
     float seedRatioPercentDone;
 
-    /** Speed all piece being sent for this torrent.
-        This ONLY counts piece data. */
-    float pieceUploadSpeed_KBps;
+    /** Speed of all data being sent for this torrent,
+        including both torrent piece data and BitTorrent protocol messages,
+        in bytes per second */
+    float uploadSpeedBps;
 
-    /** Speed all piece being received for this torrent.
-        This ONLY counts piece data. */
-    float pieceDownloadSpeed_KBps;
+    /** Speed of all data being received for this torrent,
+        including both torrent piece data and BitTorrent protocol messages,
+        in bytes per second */
+    float downloadSpeedBps;
 
     /** Total uploaded bytes / sizeWhenDone.
         NB: In Transmission 3.00 and earlier, this was total upload / download,

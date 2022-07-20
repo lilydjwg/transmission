@@ -726,11 +726,11 @@ static void initField(tr_torrent const* const tor, tr_stat const* const st, tr_v
         break;
 
     case TR_KEY_rateDownload:
-        tr_variantInitInt(initme, tr_toSpeedBytes(st->pieceDownloadSpeed_KBps));
+        tr_variantInitInt(initme, st->downloadSpeedBps);
         break;
 
     case TR_KEY_rateUpload:
-        tr_variantInitInt(initme, tr_toSpeedBytes(st->pieceUploadSpeed_KBps));
+        tr_variantInitInt(initme, st->uploadSpeedBps);
         break;
 
     case TR_KEY_recheckProgress:

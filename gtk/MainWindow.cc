@@ -135,8 +135,8 @@ Gtk::TreeView* MainWindow::Impl::makeview(Glib::RefPtr<Gtk::TreeModel> const& mo
     renderer_ = Gtk::make_managed<TorrentCellRenderer>();
     column_->pack_start(*renderer_, false);
     column_->add_attribute(renderer_->property_torrent(), torrent_cols.torrent);
-    column_->add_attribute(renderer_->property_piece_upload_speed(), torrent_cols.speed_up);
-    column_->add_attribute(renderer_->property_piece_download_speed(), torrent_cols.speed_down);
+    column_->add_attribute(renderer_->property_piece_upload_speed(), torrent_cols.speed_up_Bps);
+    column_->add_attribute(renderer_->property_piece_download_speed(), torrent_cols.speed_down_Bps);
 
     view->append_column(*column_);
     renderer_->property_xpad() = GUI_PAD_SMALL;
@@ -622,23 +622,23 @@ void MainWindow::Impl::updateSpeeds()
     if (session != nullptr)
     {
         auto dn_count = int{};
-        auto dn_speed = double{};
+        auto dn_speed_Bps = size_t{};
         auto up_count = int{};
-        auto up_speed = double{};
+        auto up_speed_Bps = size_t{};
 
         auto const model = core_->get_model();
         for (auto const& row : model->children())
         {
             dn_count += row.get_value(torrent_cols.active_peers_down);
-            dn_speed += row.get_value(torrent_cols.speed_down);
+            dn_speed_Bps += row.get_value(torrent_cols.speed_down_Bps);
             up_count += row.get_value(torrent_cols.active_peers_up);
-            up_speed += row.get_value(torrent_cols.speed_up);
+            up_speed_Bps += row.get_value(torrent_cols.speed_up_Bps);
         }
 
-        dl_lb_->set_text(fmt::format(_("{download_speed} ▼"), fmt::arg("download_speed", tr_formatter_speed_KBps(dn_speed))));
+        dl_lb_->set_text(fmt::format(_("{download_speed} ▼"), fmt::arg("download_speed", tr_formatter_speed_Bps(dn_speed_Bps))));
         dl_lb_->set_visible(dn_count > 0);
 
-        ul_lb_->set_text(fmt::format(_("{upload_speed} ▲"), fmt::arg("upload_speed", tr_formatter_speed_KBps(up_speed))));
+        ul_lb_->set_text(fmt::format(_("{upload_speed} ▲"), fmt::arg("upload_speed", tr_formatter_speed_Bps(up_speed_Bps))));
         ul_lb_->set_visible(dn_count > 0 || up_count > 0);
     }
 }

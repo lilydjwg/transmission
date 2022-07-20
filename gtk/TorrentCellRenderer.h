@@ -23,8 +23,8 @@ public:
     TR_DISABLE_COPY_MOVE(TorrentCellRenderer)
 
     Glib::PropertyProxy<gpointer> property_torrent();
-    Glib::PropertyProxy<double> property_piece_upload_speed();
-    Glib::PropertyProxy<double> property_piece_download_speed();
+    Glib::PropertyProxy<unsigned int> property_piece_upload_speed();
+    Glib::PropertyProxy<unsigned int> property_piece_download_speed();
     Glib::PropertyProxy<int> property_bar_height();
     Glib::PropertyProxy<bool> property_compact();
 

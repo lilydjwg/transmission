@@ -149,8 +149,8 @@ public:
     Gtk::TreeModelColumn<Glib::ustring> name_collated;
     Gtk::TreeModelColumn<gpointer> torrent;
     Gtk::TreeModelColumn<tr_torrent_id_t> torrent_id;
-    Gtk::TreeModelColumn<double> speed_up;
-    Gtk::TreeModelColumn<double> speed_down;
+    Gtk::TreeModelColumn<unsigned int> speed_up_Bps;
+    Gtk::TreeModelColumn<unsigned int> speed_down_Bps;
     Gtk::TreeModelColumn<int> active_peers_up;
     Gtk::TreeModelColumn<int> active_peers_down;
     Gtk::TreeModelColumn<double> recheck_progress;

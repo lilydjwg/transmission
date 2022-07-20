@@ -176,8 +176,8 @@ TorrentModelColumns::TorrentModelColumns()
     add(name_collated);
     add(torrent);
     add(torrent_id);
-    add(speed_up);
-    add(speed_down);
+    add(speed_up_Bps);
+    add(speed_down_Bps);
     add(active_peers_up);
     add(active_peers_down);
     add(recheck_progress);
@@ -435,25 +435,23 @@ int compare_by_ratio(Gtk::TreeModel::iterator const& a, Gtk::TreeModel::iterator
 
 int compare_by_activity(Gtk::TreeModel::iterator const& a, Gtk::TreeModel::iterator const& b)
 {
-    int ret = 0;
-
     auto* const ta = static_cast<tr_torrent*>(a->get_value(torrent_cols.torrent));
     auto* const tb = static_cast<tr_torrent*>(b->get_value(torrent_cols.torrent));
-    auto const aUp = a->get_value(torrent_cols.speed_up);
-    auto const aDown = a->get_value(torrent_cols.speed_down);
-    auto const bUp = b->get_value(torrent_cols.speed_up);
-    auto const bDown = b->get_value(torrent_cols.speed_down);
+    auto const aUp = a->get_value(torrent_cols.speed_up_Bps);
+    auto const aDown = a->get_value(torrent_cols.speed_down_Bps);
+    auto const bUp = b->get_value(torrent_cols.speed_up_Bps);
+    auto const bDown = b->get_value(torrent_cols.speed_down_Bps);
 
-    ret = compare_double(aUp + aDown, bUp + bDown);
+    int ret = compare_uint64(aUp + aDown, bUp + bDown);
 
-    if (ret == 0)
+    if (ret == 0) // secondary sort key
     {
         auto const* const sa = tr_torrentStatCached(ta);
         auto const* const sb = tr_torrentStatCached(tb);
         ret = compare_uint64(sa->peersSendingToUs + sa->peersGettingFromUs, sb->peersSendingToUs + sb->peersGettingFromUs);
     }
 
-    if (ret == 0)
+    if (ret == 0) // tertiary sort key
     {
         ret = compare_by_queue(a, b);
     }
@@ -970,8 +968,8 @@ void Session::Impl::add_torrent(tr_torrent* tor, bool do_notify)
         (*iter)[torrent_cols.name_collated] = collated;
         (*iter)[torrent_cols.torrent] = tor;
         (*iter)[torrent_cols.torrent_id] = tr_torrentId(tor);
-        (*iter)[torrent_cols.speed_up] = st->pieceUploadSpeed_KBps;
-        (*iter)[torrent_cols.speed_down] = st->pieceDownloadSpeed_KBps;
+        (*iter)[torrent_cols.speed_up_Bps] = st->uploadSpeedBps;
+        (*iter)[torrent_cols.speed_down_Bps] = st->downloadSpeedBps;
         (*iter)[torrent_cols.active_peers_up] = st->peersGettingFromUs;
         (*iter)[torrent_cols.active_peers_down] = st->peersSendingToUs + st->webseedsSendingToUs;
         (*iter)[torrent_cols.recheck_progress] = st->recheckProgress;
@@ -1338,9 +1336,9 @@ void update_foreach(Gtk::TreeModel::Row const& row)
     auto const oldPriority = row.get_value(torrent_cols.priority);
     auto const oldQueuePosition = row.get_value(torrent_cols.queue_position);
     auto const oldTrackers = row.get_value(torrent_cols.trackers);
-    auto const oldUpSpeed = row.get_value(torrent_cols.speed_up);
+    auto const oldUpSpeed = row.get_value(torrent_cols.speed_up_Bps);
     auto const oldRecheckProgress = row.get_value(torrent_cols.recheck_progress);
-    auto const oldDownSpeed = row.get_value(torrent_cols.speed_down);
+    auto const oldDownSpeed = row.get_value(torrent_cols.speed_down_Bps);
 
     /* get the new states */
     auto const* const st = tr_torrentStat(tor);
@@ -1350,8 +1348,8 @@ void update_foreach(Gtk::TreeModel::Row const& row)
     auto const newPriority = tr_torrentGetPriority(tor);
     auto const newQueuePosition = st->queuePosition;
     auto const newTrackers = build_torrent_trackers_hash(tor);
-    auto const newUpSpeed = st->pieceUploadSpeed_KBps;
-    auto const newDownSpeed = st->pieceDownloadSpeed_KBps;
+    auto const newUpSpeed = st->uploadSpeedBps;
+    auto const newDownSpeed = st->downloadSpeedBps;
     auto const newRecheckProgress = st->recheckProgress;
     auto const newActivePeerCount = st->peersSendingToUs + st->peersGettingFromUs + st->webseedsSendingToUs;
     auto const newDownloadPeerCount = st->peersSendingToUs;
@@ -1377,8 +1375,8 @@ void update_foreach(Gtk::TreeModel::Row const& row)
         row[torrent_cols.priority] = newPriority;
         row[torrent_cols.queue_position] = newQueuePosition;
         row[torrent_cols.trackers] = newTrackers;
-        row[torrent_cols.speed_up] = newUpSpeed;
-        row[torrent_cols.speed_down] = newDownSpeed;
+        row[torrent_cols.speed_up_Bps] = newUpSpeed;
+        row[torrent_cols.speed_down_Bps] = newDownSpeed;
         row[torrent_cols.recheck_progress] = newRecheckProgress;
     }
 }

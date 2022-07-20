@@ -120,8 +120,8 @@ auto getProgressString(tr_torrent const* tor, uint64_t total_size, tr_stat const
 std::string getShortTransferString(
     tr_torrent const* const tor,
     tr_stat const* const st,
-    double uploadSpeed_KBps,
-    double downloadSpeed_KBps)
+    unsigned int uploadSpeedBps,
+    unsigned int downloadSpeedBps)
 {
     bool const have_meta = tr_torrentHasMetadata(tor);
 
@@ -129,13 +129,13 @@ std::string getShortTransferString(
     {
         return fmt::format(
             _("{download_speed} ▼  {upload_speed} ▲"),
-            fmt::arg("upload_speed", tr_formatter_speed_KBps(uploadSpeed_KBps)),
-            fmt::arg("download_speed", tr_formatter_speed_KBps(downloadSpeed_KBps)));
+            fmt::arg("upload_speed", tr_formatter_speed_Bps(uploadSpeedBps)),
+            fmt::arg("download_speed", tr_formatter_speed_Bps(downloadSpeedBps)));
     }
 
     if (bool const have_up = have_meta && st->peersGettingFromUs > 0; have_up)
     {
-        return fmt::format(_("{upload_speed} ▲"), fmt::arg("upload_speed", tr_formatter_speed_KBps(downloadSpeed_KBps)));
+        return fmt::format(_("{upload_speed} ▲"), fmt::arg("upload_speed", tr_formatter_speed_Bps(downloadSpeedBps)));
     }
 
     if (st->isStalled)
@@ -149,8 +149,8 @@ std::string getShortTransferString(
 std::string getShortStatusString(
     tr_torrent const* const tor,
     tr_stat const* const st,
-    double uploadSpeed_KBps,
-    double downloadSpeed_KBps)
+    unsigned int uploadSpeedBps,
+    unsigned int downloadSpeedBps)
 {
     switch (st->activity)
     {
@@ -176,7 +176,7 @@ std::string getShortStatusString(
     case TR_STATUS_SEED:
         return fmt::format(
             FMT_STRING("{:s} {:s}"),
-            getShortTransferString(tor, st, uploadSpeed_KBps, downloadSpeed_KBps),
+            getShortTransferString(tor, st, uploadSpeedBps, downloadSpeedBps),
             fmt::format(_("Ratio: {ratio}"), fmt::arg("ratio", tr_strlratio(st->ratio))));
 
     default:
@@ -205,8 +205,8 @@ std::optional<std::string> getErrorString(tr_stat const* st)
 auto getActivityString(
     tr_torrent const* const tor,
     tr_stat const* const st,
-    double const uploadSpeed_KBps,
-    double const downloadSpeed_KBps)
+    unsigned int uploadSpeedBps,
+    unsigned int downloadSpeedBps)
 {
     switch (st->activity)
     {
@@ -215,7 +215,7 @@ auto getActivityString(
     case TR_STATUS_CHECK:
     case TR_STATUS_DOWNLOAD_WAIT:
     case TR_STATUS_SEED_WAIT:
-        return getShortStatusString(tor, st, uploadSpeed_KBps, downloadSpeed_KBps);
+        return getShortStatusString(tor, st, uploadSpeedBps, downloadSpeedBps);
 
     case TR_STATUS_DOWNLOAD:
         if (!tr_torrentHasMetadata(tor))
@@ -277,15 +277,15 @@ auto getActivityString(
 std::string getStatusString(
     tr_torrent const* tor,
     tr_stat const* st,
-    double const uploadSpeed_KBps,
-    double const downloadSpeed_KBps)
+    unsigned int const uploadSpeedBps,
+    unsigned int const downloadSpeedBps)
 {
-    auto status_str = getErrorString(st).value_or(getActivityString(tor, st, uploadSpeed_KBps, downloadSpeed_KBps));
+    auto status_str = getErrorString(st).value_or(getActivityString(tor, st, uploadSpeedBps, downloadSpeedBps));
 
     if (st->activity != TR_STATUS_CHECK_WAIT && st->activity != TR_STATUS_CHECK && st->activity != TR_STATUS_DOWNLOAD_WAIT &&
         st->activity != TR_STATUS_SEED_WAIT && st->activity != TR_STATUS_STOPPED)
     {
-        if (auto const buf = getShortTransferString(tor, st, uploadSpeed_KBps, downloadSpeed_KBps); !std::empty(buf))
+        if (auto const buf = getShortTransferString(tor, st, uploadSpeedBps, downloadSpeedBps); !std::empty(buf))
         {
             status_str += fmt::format(FMT_STRING(" - {:s}"), buf);
         }
@@ -326,14 +326,14 @@ public:
     Glib::Property<gpointer> torrent;
     Glib::Property<int> bar_height;
 
-    /* Use this instead of tr_stat.pieceUploadSpeed so that the model can
+    /* Use this instead of tr_stat.uploadSpeed so that the model can
        control when the speed displays get updated. This is done to keep
        the individual torrents' speeds and the status bar's overall speed
        in sync even if they refresh at slightly different times */
-    Glib::Property<double> upload_speed_KBps;
+    Glib::Property<unsigned int> upload_speed_Bps;
 
     /* @see upload_speed_Bps */
-    Glib::Property<double> download_speed_KBps;
+    Glib::Property<unsigned int> download_speed_Bps;
 
     Glib::Property<bool> compact;
 
@@ -394,7 +394,7 @@ void TorrentCellRenderer::Impl::get_size_compact(Gtk::Widget& widget, int& width
 
     auto const icon = get_icon(tor, CompactIconSize, widget);
     auto const name = Glib::ustring(tr_torrentName(tor));
-    auto const gstr_stat = getShortStatusString(tor, st, upload_speed_KBps.get_value(), download_speed_KBps.get_value());
+    auto const gstr_stat = getShortStatusString(tor, st, upload_speed_Bps.get_value(), download_speed_Bps.get_value());
     renderer_.get_padding(xpad, ypad);
 
     /* get the idealized cell dimensions */
@@ -432,7 +432,7 @@ void TorrentCellRenderer::Impl::get_size_full(Gtk::Widget& widget, int& width, i
 
     auto const icon = get_icon(tor, FullIconSize, widget);
     auto const name = Glib::ustring(tr_torrentName(tor));
-    auto const gstr_stat = getStatusString(tor, st, upload_speed_KBps.get_value(), download_speed_KBps.get_value());
+    auto const gstr_stat = getStatusString(tor, st, upload_speed_Bps.get_value(), download_speed_Bps.get_value());
     auto const gstr_prog = getProgressString(tor, total_size, st);
     renderer_.get_padding(xpad, ypad);
 
@@ -564,7 +564,7 @@ void TorrentCellRenderer::Impl::render_compact(
 
     auto const icon = get_icon(tor, CompactIconSize, widget);
     auto const name = Glib::ustring(tr_torrentName(tor));
-    auto const gstr_stat = getShortStatusString(tor, st, upload_speed_KBps.get_value(), download_speed_KBps.get_value());
+    auto const gstr_stat = getShortStatusString(tor, st, upload_speed_Bps.get_value(), download_speed_Bps.get_value());
     renderer_.get_padding(xpad, ypad);
     auto const text_color = get_text_color(widget, st);
 
@@ -657,7 +657,7 @@ void TorrentCellRenderer::Impl::render_full(
     auto const icon = get_icon(tor, FullIconSize, widget);
     auto const name = Glib::ustring(tr_torrentName(tor));
     auto const gstr_prog = getProgressString(tor, total_size, st);
-    auto const gstr_stat = getStatusString(tor, st, upload_speed_KBps.get_value(), download_speed_KBps.get_value());
+    auto const gstr_stat = getStatusString(tor, st, upload_speed_Bps.get_value(), download_speed_Bps.get_value());
     renderer_.get_padding(xpad, ypad);
     auto const text_color = get_text_color(widget, st);
 
@@ -812,8 +812,8 @@ TorrentCellRenderer::~TorrentCellRenderer() = default;
 TorrentCellRenderer::Impl::Impl(TorrentCellRenderer& renderer)
     : torrent(renderer, "torrent", nullptr)
     , bar_height(renderer, "bar-height", DefaultBarHeight)
-    , upload_speed_KBps(renderer, "piece-upload-speed", 0)
-    , download_speed_KBps(renderer, "piece-download-speed", 0)
+    , upload_speed_Bps(renderer, "upload-speed", 0)
+    , download_speed_Bps(renderer, "download-speed", 0)
     , compact(renderer, "compact", false)
     , renderer_(renderer)
 {
@@ -830,14 +830,14 @@ Glib::PropertyProxy<gpointer> TorrentCellRenderer::property_torrent()
     return impl_->torrent.get_proxy();
 }
 
-Glib::PropertyProxy<double> TorrentCellRenderer::property_piece_upload_speed()
+Glib::PropertyProxy<unsigned int> TorrentCellRenderer::property_piece_upload_speed()
 {
-    return impl_->upload_speed_KBps.get_proxy();
+    return impl_->upload_speed_Bps.get_proxy();
 }
 
-Glib::PropertyProxy<double> TorrentCellRenderer::property_piece_download_speed()
+Glib::PropertyProxy<unsigned int> TorrentCellRenderer::property_piece_download_speed()
 {
-    return impl_->download_speed_KBps.get_proxy();
+    return impl_->download_speed_Bps.get_proxy();
 }
 
 Glib::PropertyProxy<int> TorrentCellRenderer::property_bar_height()
