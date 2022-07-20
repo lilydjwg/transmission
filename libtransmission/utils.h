@@ -448,6 +448,11 @@ static inline auto tr_toMemMB(uint64_t B)
     return int(B / (tr_mem_K * tr_mem_K));
 }
 
+static inline std::string tr_formatter_speed_Bps(size_t Bps)
+{
+    return tr_formatter_speed_KBps(tr_toSpeedKBps(Bps));
+}
+
 /***
 ****
 ***/

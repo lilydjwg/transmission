@@ -406,12 +406,14 @@ static void pumpLogMessages(tr_sys_file_t file)
 
 static void reportStatus(void)
 {
-    double const up = tr_sessionGetSpeed_KBps(mySession, TR_UP);
-    double const dn = tr_sessionGetSpeed_KBps(mySession, TR_DOWN);
+    double const up = tr_sessionGetSpeedBps(mySession, TR_UP);
+    double const dn = tr_sessionGetSpeedBps(mySession, TR_DOWN);
 
     if (up > 0 || dn > 0)
     {
-        sd_notifyf(0, "STATUS=Uploading %.2f KBps, Downloading %.2f KBps.\n", up, dn);
+        auto const upstr = tr_formatter_speed_Bps(up);
+        auto const dnstr = tr_formatter_speed_Bps(dn);
+        sd_notifyf(0, "STATUS=Uploading %s, Downloading %s\n", upstr.c_str(), dnstr.c_str());
     }
     else
     {
