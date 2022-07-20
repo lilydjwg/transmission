@@ -2084,10 +2084,10 @@ static char const* sessionStats(
     tr_sessionGetCumulativeStats(session, &cumulativeStats);
 
     tr_variantDictAddInt(args_out, TR_KEY_activeTorrentCount, running);
-    tr_variantDictAddReal(args_out, TR_KEY_downloadSpeed, tr_sessionGetPieceSpeed_Bps(session, TR_DOWN));
+    tr_variantDictAddReal(args_out, TR_KEY_downloadSpeed, tr_sessionGetSpeedBps(session, TR_DOWN));
     tr_variantDictAddInt(args_out, TR_KEY_pausedTorrentCount, total - running);
     tr_variantDictAddInt(args_out, TR_KEY_torrentCount, total);
-    tr_variantDictAddReal(args_out, TR_KEY_uploadSpeed, tr_sessionGetPieceSpeed_Bps(session, TR_UP));
+    tr_variantDictAddReal(args_out, TR_KEY_uploadSpeed, tr_sessionGetSpeedBps(session, TR_UP));
 
     tr_variant* d = tr_variantDictAddDict(args_out, TR_KEY_cumulative_stats, 5);
     tr_variantDictAddInt(d, TR_KEY_downloadedBytes, cumulativeStats.downloadedBytes);

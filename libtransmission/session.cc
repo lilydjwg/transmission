@@ -1804,11 +1804,6 @@ bool tr_sessionGetDeleteSource(tr_session const* session)
 ****
 ***/
 
-unsigned int tr_sessionGetPieceSpeed_Bps(tr_session const* session, tr_direction dir)
-{
-    return tr_isSession(session) ? session->top_bandwidth_.getPieceSpeedBytesPerSecond(0, dir) : 0;
-}
-
 unsigned int tr_sessionGetSpeedBps(tr_session const* session, tr_direction dir)
 {
     return tr_isSession(session) ? session->top_bandwidth_.getRawSpeedBytesPerSecond(0, dir) : 0;

@@ -524,7 +524,6 @@ constexpr bool tr_isPriority(tr_priority_t p)
 ***/
 
 unsigned int tr_sessionGetSpeedLimit_Bps(tr_session const*, tr_direction);
-unsigned int tr_sessionGetPieceSpeed_Bps(tr_session const*, tr_direction);
 
 bool tr_sessionGetActiveSpeedLimit_Bps(tr_session const* session, tr_direction dir, unsigned int* setme);
 
