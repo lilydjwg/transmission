@@ -162,6 +162,6 @@ std::string SystemTrayIcon::Impl::make_tooltip_text() const
     auto const* const session = core_->get_session();
     return fmt::format(
         _("{upload_speed} ▲ {download_speed} ▼"),
-        fmt::arg("upload_speed", tr_formatter_speed_KBps(tr_sessionGetRawSpeed_KBps(session, TR_UP))),
-        fmt::arg("download_speed", tr_formatter_speed_KBps(tr_sessionGetRawSpeed_KBps(session, TR_DOWN))));
+        fmt::arg("upload_speed", tr_formatter_speed_KBps(tr_sessionGetSpeed_KBps(session, TR_UP))),
+        fmt::arg("download_speed", tr_formatter_speed_KBps(tr_sessionGetSpeed_KBps(session, TR_DOWN))));
 }

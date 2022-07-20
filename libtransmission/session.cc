@@ -1809,14 +1809,14 @@ unsigned int tr_sessionGetPieceSpeed_Bps(tr_session const* session, tr_direction
     return tr_isSession(session) ? session->top_bandwidth_.getPieceSpeedBytesPerSecond(0, dir) : 0;
 }
 
-static unsigned int tr_sessionGetRawSpeed_Bps(tr_session const* session, tr_direction dir)
+static unsigned int tr_sessionGetSpeed_Bps(tr_session const* session, tr_direction dir)
 {
     return tr_isSession(session) ? session->top_bandwidth_.getRawSpeedBytesPerSecond(0, dir) : 0;
 }
 
-double tr_sessionGetRawSpeed_KBps(tr_session const* session, tr_direction dir)
+double tr_sessionGetSpeed_KBps(tr_session const* session, tr_direction dir)
 {
-    return tr_toSpeedKBps(tr_sessionGetRawSpeed_Bps(session, dir));
+    return tr_toSpeedKBps(tr_sessionGetSpeed_Bps(session, dir));
 }
 
 int tr_sessionCountTorrents(tr_session const* session)

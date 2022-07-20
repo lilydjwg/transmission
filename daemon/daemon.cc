@@ -406,8 +406,8 @@ static void pumpLogMessages(tr_sys_file_t file)
 
 static void reportStatus(void)
 {
-    double const up = tr_sessionGetRawSpeed_KBps(mySession, TR_UP);
-    double const dn = tr_sessionGetRawSpeed_KBps(mySession, TR_DOWN);
+    double const up = tr_sessionGetSpeed_KBps(mySession, TR_UP);
+    double const dn = tr_sessionGetSpeed_KBps(mySession, TR_DOWN);
 
     if (up > 0 || dn > 0)
     {
