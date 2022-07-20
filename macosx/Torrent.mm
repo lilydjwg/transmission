@@ -1407,17 +1407,17 @@ bool trashDataFile(char const* filename, tr_error** error)
     return self.fStat->peersGettingFromUs;
 }
 
-- (CGFloat)downloadRate
+- (CGFloat)downloadRateBps
 {
-    return self.fStat->pieceDownloadSpeed_KBps;
+    return self.fStat->pieceDownloadSpeedBps;
 }
 
-- (CGFloat)uploadRate
+- (CGFloat)uploadRateBps
 {
-    return self.fStat->pieceUploadSpeed_KBps;
+    return self.fStat->pieceUploadSpeedBps;
 }
 
-- (CGFloat)totalRate
+- (CGFloat)totalRateBps
 {
     return self.downloadRate + self.uploadRate;
 }

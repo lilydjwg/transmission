@@ -2599,7 +2599,7 @@ static void removeKeRangerRansomware()
     }
     else if ([sortType isEqualToString:SORT_ACTIVITY])
     {
-        NSSortDescriptor* rateDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"totalRate" ascending:!asc];
+        NSSortDescriptor* rateDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"totalRateBps" ascending:!asc];
         NSSortDescriptor* activityDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"dateActivityOrAdd" ascending:!asc];
 
         descriptors = @[ rateDescriptor, activityDescriptor, nameDescriptor ];
